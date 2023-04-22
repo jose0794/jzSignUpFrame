@@ -1,0 +1,36 @@
+{
+    "WebApiUrl": "https://betslipapi.isppro.net/api/",
+    "jazzCoreApi": "https://jazzcoreapi.isppro.net/api/",
+    "jazzCoreApi2": "https://jazzcoreapi.isppro.net/api/",
+    "DefaultHostName": "jazzsports.ag",
+    "Language": "en",
+    "IdSite": 1,
+    "Name": "jazzsports",
+    "ImgServerPath": "https://images.betimages.com/Betslip/",
+    "apiLocation": [
+        {
+            "apiUrl": "https://api.ipstack.com/check?access_key=",
+            "apiToken": "c036cdf7d63f2bcd781fc2a0c3fbd52c"
+        },
+        {
+            "apiUrl": "https://ipinfo.io/json?token=",
+            "apiToken": "a3cc8f54091cfc"
+        },
+        {
+            "apiUrl": "https://ipinfo.io/json?token=",
+            "apiToken": "9d91c22fb3cfaa"
+        },
+        {
+            "apiUrl": "https://ipinfo.io/json?token=",
+            "apiToken": "b1d3b6760490a2"
+        },
+        {
+            "apiUrl": "https://ipinfo.io/json?token=",
+            "apiToken": "368c9afba0db23"
+        },
+        {
+            "apiUrl": "https://api.ipdata.co/?api-key=",
+            "apiToken": "b6b09cbe4c944e5a64194a2af9742a8e8817f06fb75ba61860d3db58"
+        }
+    ]
+}

@@ -1,0 +1,727 @@
+<br>
+<br>
+<br>
+<div class="col-sm-6">
+    <div *ngIf="_Currencies && _Currencies.length > 1" class="col-sm-12">
+        <div class="form-group label-effect-1">
+            <p-dropdown [options]="_Currencies" optionLabel="currency" [(ngModel)]="_signUpRequest.Currency"
+                [style]="{'width':'100%'}" (onChange)="GetSigUpConfig();" [filter]="_IsDesktop">
+            </p-dropdown>
+            <label class="label-with-text" for="Country">{{ 'signupColumns.Currency' | translate
+                }}
+            </label>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<ng-container *ngIf=_CPF>
+    <div class="card">
+        <div class="card-body">
+            <form *ngIf="_FormConfiguration" name="form" #f="ngForm" class="form-horizontal"
+                (ngSubmit)="f.form.valid && validateCPF(f.form.valid);" novalidate>
+                <div class="row mt-3">
+                    <ng-container *ngFor="let item of _FormConfiguration">
+                        <ng-container [ngSwitch]="item.name">
+                            <!-- CPF -->
+                            <ng-container *ngSwitchCase="'CPF'">
+                                <div class="col-sm-3">
+                                    <div class="col-3">
+                                        <div class="form-group cs-label-effect-dd">
+                                            <select [style]="{'width':'100%'}" class="form-control" name="CPFType"
+                                                [(ngModel)]="_signUpRequest.CPFType" [required]="item.mandatoryField">
+                                                <option [value]='null' disabled>
+                                                    {{ 'signupColumns.ChooseOne' | translate }}
+                                                </option>
+                                                <ng-container *ngFor="let item of _Identifications">
+                                                    <option [value]="item">
+                                                        {{ item }} </option>
+                                                </ng-container>
+                                            </select>
+                                            <label class="label-with-text" for="CPFType">{{
+                                                'signupColumns.CPFType' |
+                                                translate }}
+                                            </label>
+                                            <small *ngIf="f.submitted && _signUpRequest.MonthBirth >= 0"
+                                                class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                |
+                                                translate}}</small>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group label-effect">
+                                        <input id="FCPF" name="FCPF" #FCPF="ngModel"
+                                            [(ngModel)]="_signUpRequest.GovernmentId"
+                                            class="form-control form-control-1" type="text"
+                                            [required]="item.mandatoryField" minlength="11" maxlength="11"
+                                            (keydown.space)="$event.preventDefault();"
+                                            (keypress)="keyPressNumbers($event)">
+                                        <label [ngClass]=" (FCPF.value)? 'label-with-text' : null" for="FCPF">
+                                            {{ _signUpRequest.CPFType }}
+                                        </label>
+                                        <small *ngIf="f.submitted && !FCPF.valid" class="float-right input-requerid">
+                                            {{'signupColumns.Mandatory' | translate}}
+                                        </small>
+                                    </div>
+                                </div>
+                                <!-- DATE OF BIRTH -->
+                                <div class="col-sm-3 mt-4 quick-bithday">
+                                    <ng-container *ngIf="_DateOrder">
+                                        <label>{{ 'signupColumns.dateOfBirth' | translate }}</label>
+                                        <div class="row justify-content-center">
+
+                                            <!-- day -->
+                                            <div class="col-4">
+                                                <div class="form-group cs-label-effect-dd">
+                                                    <select [style]="{'width':'100%'}" class="form-control" name="day"
+                                                        [(ngModel)]="_signUpRequest.DayBirth" (change)="validateDate()"
+                                                        [required]="item.mandatoryField">
+                                                        <option [value]='null' disabled>
+                                                            {{ 'signupColumns.ChooseOne' | translate }}
+                                                        </option>
+                                                        <ng-container *ngFor="let item of _DaysDetails">
+                                                            <option [value]="item.Id">
+                                                                {{ item.Name | translate }} </option>
+                                                        </ng-container>
+                                                    </select>
+                                                    <label class="label-with-text" for="DayBirth">{{ 'signupColumns.Day'
+                                                        |
+                                                        translate }}
+                                                    </label>
+                                                    <small *ngIf="f.submitted && _signUpRequest.DayBirth >= 0"
+                                                        class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                        |
+                                                        translate}}</small>
+                                                </div>
+
+                                            </div>
+                                            <!-- month-->
+                                            <div class="col-4">
+                                                <div class="form-group cs-label-effect-dd">
+                                                    <select [style]="{'width':'100%'}" class="form-control" name="month"
+                                                        [(ngModel)]="_signUpRequest.MonthBirth"
+                                                        (change)="validateDate()" [required]="item.mandatoryField">
+                                                        <option [value]='null' disabled>
+                                                            {{ 'signupColumns.ChooseOne' | translate }}
+                                                        </option>
+                                                        <ng-container *ngFor="let item of _MonthDetails">
+                                                            <option [value]="item.Id">
+                                                                {{ item.Name | translate }} </option>
+                                                        </ng-container>
+                                                    </select>
+                                                    <label class="label-with-text" for="DateBMonth">{{
+                                                        'signupColumns.Month' |
+                                                        translate }}
+                                                    </label>
+                                                    <small *ngIf="f.submitted && _signUpRequest.MonthBirth >= 0"
+                                                        class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                        |
+                                                        translate}}</small>
+                                                </div>
+                                            </div>
+                                            <!-- year -->
+                                            <div class="col-4">
+
+                                                <div class="form-group cs-label-effect-dd">
+                                                    <select [style]="{'width':'100%'}" class="form-control" name="year"
+                                                        [(ngModel)]="_signUpRequest.YearBirth" (change)="validateDate()"
+                                                        [required]="item.mandatoryField">
+                                                        <option [value]='null' disabled>
+                                                            {{ 'signupColumns.ChooseOne' | translate }}
+                                                        </option>
+                                                        <ng-container *ngFor="let item of _YearDetails">
+                                                            <option [value]="item.Id">
+                                                                {{ item.Name | translate }} </option>
+                                                        </ng-container>
+                                                    </select>
+                                                    <label class="label-with-text" for="YearBirth">{{
+                                                        'signupColumns.Year' |
+                                                        translate }}
+                                                    </label>
+                                                    <small *ngIf="f.submitted && _signUpRequest.YearBirth >= 0"
+                                                        class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                        |
+                                                        translate}}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <small *ngIf="f.submitted && !_AccessInputs.ValidBirth"
+                                            class="float-right input-requerid mt-2">{{'signupColumns.MustBeOlder' |
+                                            translate}}</small>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <!-- BUTTONS -->
+                <div class="col-sm-12 mt-4">
+                    <div class="text-center mt-4">
+                        <button id="signup_step1_sign_me_up" [disabled]="_model.loadGSingUp" type="submit"
+                            class="btn btn-success mb-2">
+                            <div *ngIf="!_model.loadGSingUp">{{ 'signupColumns.validCpf' | translate }}</div>
+                            <div *ngIf="_model.loadGSingUp">{{ 'Generics.Loading' | translate }} &nbsp; <i
+                                    class="fa fa-spinner fa-spin fa-spin-size"></i></div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>
+<br>
+<br>
+<ng-container *ngIf="_FormConfiguration">
+    <form *ngIf="_FormConfiguration" name="form" #f="ngForm" class="form-horizontal"
+        (ngSubmit)="f.form.valid && validateDate() && CreateSignUp(f.form.valid);" novalidate>
+        <!-- GENERAL COLUMS -->
+        <div class="row mt-3">
+            <ng-container *ngFor="let item of _FormConfiguration">
+                <ng-container [ngSwitch]="item.name">
+                    <!-- FIRST NAME -->
+                    <ng-container *ngSwitchCase="'First Name'">
+                        <div class="col-sm-6">
+                            <div class="form-group label-effect">
+                                <input id="FName" name="FName" #FName="ngModel" [(ngModel)]="_signUpRequest.FirstName"
+                                    class="form-control form-control-1" type="text" [required]="item.mandatoryField">
+                                <label [ngClass]=" (FName.value)? 'label-with-text' : null" for="FName">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !FName.valid" class="float-right input-requerid">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- LAST NAME -->
+                    <ng-container *ngSwitchCase="'Last Name'">
+                        <div class="col-sm-6">
+                            <div class="form-group label-effect">
+                                <input id="LName" name="LName" #LName="ngModel" [(ngModel)]="_signUpRequest.LastName"
+                                    class="form-control form-control-1" type="text" [required]="item.mandatoryField">
+                                <label [ngClass]=" (LName.value)? 'label-with-text' : null" for="LName">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !LName.valid" class="float-right input-requerid">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- EMAIL -->
+                    <ng-container *ngSwitchCase="'Email'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="Email" name="Email" #Email="ngModel" [(ngModel)]="_signUpRequest.Email"
+                                    class="form-control form-control-1" type="text"
+                                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,3}$"
+                                    (keydown.space)="$event.preventDefault();" [required]="item.mandatoryField"
+                                    maxlength="30" (keyup)="EmailsMatch();">
+                                <label [ngClass]=" (Email.value)? 'label-with-text' : null" for="Email">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && Email.errors?.pattern" class="float-right input-requerid">
+                                    {{'Invalid Email' | translate}}
+                                </small>
+                                <small *ngIf="f.submitted && !Email.valid && !Email.errors?.pattern"
+                                    class="float-right input-requerid">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- EMAIL CONFIRMTATION -->
+                    <ng-container *ngSwitchCase="'Email Confirmation'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="EmailC" name="EmailC" #EmailC="ngModel"
+                                    [(ngModel)]="_signUpRequest.EmailConfirmation" class="form-control form-control-1"
+                                    type="text" (keydown.space)="$event.preventDefault();"
+                                    [required]="item.mandatoryField" maxlength="30" (keyup)="EmailsMatch();">
+                                <label [ngClass]=" (EmailC.value)? 'label-with-text' : null" for="EmailC">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !_AccessInputs.EmailsMatch"
+                                    class="float-right input-requerid">
+                                    {{'signupColumns.EmailsNotMatch' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- ADDRESS  -->
+                    <ng-container *ngSwitchCase="'Address'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="Address" name="Address" #Address="ngModel"
+                                    [(ngModel)]="_signUpRequest.Address" class="form-control form-control-1" type="text"
+                                    [required]="item.mandatoryField">
+                                <label [ngClass]=" (Address.value)? 'label-with-text' : null" for="Address">
+                                    {{item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !Address.valid" class="float-right input-requerid">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- PHONE NUMBER -->
+                    <ng-container *ngSwitchCase="'Phone Number'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="row justify-content-start">
+                                <div class="col-3 mt-2">
+                                    <div class="input-group flex-nowrap">
+                                        <div class="input-group-prepend">
+                                            <img width="16" height="11" [src]="_imgCountry" alt="" class="mt-1" />
+                                        </div>
+                                        <small class="text-11px">&nbsp;+{{_signUpRequest.CountryCode}}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-9">
+                                    <div class="form-group label-effect">
+                                        <input type="text" pInputText pKeyFilter="money" id="Phone" name="Phone"
+                                            #Phone="ngModel" [(ngModel)]="_signUpRequest.PhoneNumber"
+                                            class="form-control form-control-1"
+                                            (keydown.space)="$event.preventDefault();"
+                                            (keypress)="keyPressNumbers($event)" [required]="item.mandatoryField"
+                                            onpaste="return false" (change)="keyPressNumbers($event)">
+                                        <label [ngClass]=" (Phone.value)? 'label-with-text' : null" for="Phone">
+                                            {{item.pathLanguage | translate }}
+                                        </label>
+                                        <small *ngIf="f.submitted && !Phone.valid" class="float-right input-requerid">
+                                            {{'signupColumns.Mandatory'| translate}}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- COUNTRY -->
+                    <ng-container *ngSwitchCase="'Country'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect-1">
+                                <p-dropdown name="Country" [options]="_Countries" optionLabel="country"
+                                    [(ngModel)]="_signUpRequest.Country"
+                                    placeholder="{{ 'signupColumns.SelectCountry' | translate }}"
+                                    [ngModelOptions]="{standalone: true}" [style]="{'width':'100%'}"
+                                    [filter]="_IsDesktop" (onChange)="ChangeDataByCountry();">
+                                </p-dropdown>
+                                <label class="label-with-text" for="Country">
+                                    {{item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !_signUpRequest.Country"
+                                    class="float-right input-requerid mt-2">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- LINE TYPE -->
+                    <ng-container *ngSwitchCase="'Line Type'">
+                        <div *ngIf="_LineTypes && _LineTypes.length > 1" class="col-sm-6 mt-4">
+                            <div class="form-group label-effect-1">
+                                <p-dropdown name="LineType" [options]="_LineTypes" optionLabel="Name"
+                                    [(ngModel)]="_signUpRequest.LineType"
+                                    placeholder="{{ 'signupColumns.SelectLineType' | translate }}"
+                                    [ngModelOptions]="{standalone: true}" [style]="{'width':'100%'}"
+                                    [filter]="_IsDesktop">
+                                </p-dropdown>
+                                <label class="label-with-text" for="LineType">
+                                    {{item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !_signUpRequest.LineType"
+                                    class="float-right input-requerid mt-2">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- STATE -->
+                    <ng-container *ngSwitchCase="'State'">
+                        <div *ngIf="_signUpRequest.Country && _States && _States.length > 0" class="col-sm-6 mt-4">
+                            <div class="form-group label-effect-1">
+                                <p-dropdown class="State" [options]="_States" optionLabel="state"
+                                    [(ngModel)]="_signUpRequest.State"
+                                    placeholder="{{ 'signupColumns.SelectState' | translate }}"
+                                    [ngModelOptions]="{standalone: true}" [style]="{'width':'100%'}"
+                                    [filter]="_IsDesktop" [required]="item.mandatoryField">
+                                </p-dropdown>
+                                <label class="label-with-text" for="State">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !_signUpRequest.State"
+                                    class="float-right input-requerid mt-2">
+                                    {{'signupColumns.Mandatory'| translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- CITY -->
+                    <ng-container *ngSwitchCase="'City'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="City" name="City" #City="ngModel" [(ngModel)]="_signUpRequest.City"
+                                    class="form-control form-control-1" type="text" [required]="item.mandatoryField">
+                                <label [ngClass]=" (City.value)? 'label-with-text' : null" for="City">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !City.valid" class="float-right input-requerid">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- ZIP -->
+                    <ng-container *ngSwitchCase="'ZIP'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="Zip" name="Zip" #Zip="ngModel" [(ngModel)]="_signUpRequest.Zip"
+                                    class="form-control form-control-1" type="text" [required]="item.mandatoryField">
+                                <label [ngClass]=" (Zip.value)? 'label-with-text' : null" for="Zip">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !Zip.valid" class="float-right input-requerid">
+                                    {{'signupColumns.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- DATE OF BIRTH -->
+                    <ng-container *ngIf=!_CPF>
+                        <ng-container *ngSwitchCase="'Date of Birth'">
+                            <div class="col-sm-12 mt-4 quick-bithday">
+                                <ng-container *ngIf="_DateOrder">
+
+                                    <label>{{ item.pathLanguage | translate }}</label>
+
+                                    <div class="row justify-content-center">
+
+                                        <!-- day -->
+                                        <div class="col-4">
+
+                                            <div class="form-group cs-label-effect-dd">
+                                                <select [style]="{'width':'100%'}" class="form-control" name="day"
+                                                    [(ngModel)]="_signUpRequest.DayBirth" (change)="validateDate()"
+                                                    [required]="item.mandatoryField">
+                                                    <option [value]='null' disabled>
+                                                        {{ 'signupColumns.ChooseOne' | translate }}
+                                                    </option>
+                                                    <ng-container *ngFor="let item of _DaysDetails">
+                                                        <option [value]="item.Id">
+                                                            {{ item.Name | translate }} </option>
+                                                    </ng-container>
+                                                </select>
+                                                <label class="label-with-text" for="DayBirth">{{ 'signupColumns.Day' |
+                                                    translate }}
+                                                </label>
+                                                <small *ngIf="f.submitted && _signUpRequest.DayBirth >= 0"
+                                                    class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                    |
+                                                    translate}}</small>
+                                            </div>
+
+                                        </div>
+                                        <!-- month-->
+                                        <div class="col-4">
+                                            <div class="form-group cs-label-effect-dd">
+                                                <select [style]="{'width':'100%'}" class="form-control" name="month"
+                                                    [(ngModel)]="_signUpRequest.MonthBirth" (change)="validateDate()"
+                                                    [required]="item.mandatoryField">
+                                                    <option [value]='null' disabled>
+                                                        {{ 'signupColumns.ChooseOne' | translate }}
+                                                    </option>
+                                                    <ng-container *ngFor="let item of _MonthDetails">
+                                                        <option [value]="item.Id">
+                                                            {{ item.Name | translate }} </option>
+                                                    </ng-container>
+                                                </select>
+                                                <label class="label-with-text" for="DateBMonth">{{ 'signupColumns.Month'
+                                                    |
+                                                    translate }}
+                                                </label>
+                                                <small *ngIf="f.submitted && _signUpRequest.MonthBirth >= 0"
+                                                    class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                    |
+                                                    translate}}</small>
+                                            </div>
+                                        </div>
+                                        <!-- year -->
+                                        <div class="col-4">
+
+                                            <div class="form-group cs-label-effect-dd">
+                                                <select [style]="{'width':'100%'}" class="form-control" name="year"
+                                                    [(ngModel)]="_signUpRequest.YearBirth" (change)="validateDate()"
+                                                    [required]="item.mandatoryField">
+                                                    <option [value]='null' disabled>
+                                                        {{ 'signupColumns.ChooseOne' | translate }}
+                                                    </option>
+                                                    <ng-container *ngFor="let item of _YearDetails">
+                                                        <option [value]="item.Id">
+                                                            {{ item.Name | translate }} </option>
+                                                    </ng-container>
+                                                </select>
+                                                <label class="label-with-text" for="YearBirth">{{ 'signupColumns.Year' |
+                                                    translate }}
+                                                </label>
+                                                <small *ngIf="f.submitted && _signUpRequest.YearBirth >= 0"
+                                                    class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                    |
+                                                    translate}}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <small *ngIf="f.submitted && !_AccessInputs.ValidBirth"
+                                        class="float-right input-requerid mt-2">{{'signupColumns.MustBeOlder' |
+                                        translate}}</small>
+
+                                </ng-container>
+                                <ng-container *ngIf="!_DateOrder">
+                                    <label>{{ item.pathLanguage | translate }}</label>
+
+                                    <div class="row justify-content-center">
+                                        <!-- month-->
+                                        <div class="col-4">
+                                            <div class="form-group cs-label-effect-dd">
+                                                <select [style]="{'width':'100%'}" class="form-control" name="month"
+                                                    [(ngModel)]="_signUpRequest.MonthBirth" (change)="IsValidDate()"
+                                                    [required]="item.mandatoryField">
+                                                    <option [value]='null' disabled>
+                                                        {{ 'signupColumns.ChooseOne' | translate }}
+                                                    </option>
+                                                    <ng-container *ngFor="let item of _MonthDetails">
+                                                        <option [value]="item.Id">
+                                                            {{ item.Name | translate }} </option>
+                                                    </ng-container>
+                                                </select>
+                                                <label class="label-with-text" for="DateBMonth">{{ 'signupColumns.Month'
+                                                    |
+                                                    translate }}
+                                                </label>
+                                                <small *ngIf="f.submitted && _signUpRequest.MonthBirth <= 0"
+                                                    class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                    |
+                                                    translate}}</small>
+                                            </div>
+
+                                        </div>
+                                        <!-- day -->
+                                        <div class="col-4">
+
+                                            <div class="form-group cs-label-effect-dd">
+                                                <select [style]="{'width':'100%'}" class="form-control" name="day"
+                                                    [(ngModel)]="_signUpRequest.DayBirth" (change)="IsValidDate()"
+                                                    [required]="item.mandatoryField">
+                                                    <option [value]='null' disabled>
+                                                        {{ 'signupColumns.ChooseOne' | translate }}
+                                                    </option>
+                                                    <ng-container *ngFor="let item of _DaysDetails">
+                                                        <option [value]="item.Id">
+                                                            {{ item.Name | translate }} </option>
+                                                    </ng-container>
+                                                </select>
+                                                <label class="label-with-text" for="DayBirth">{{ 'signupColumns.Day' |
+                                                    translate }}
+                                                </label>
+                                                <small *ngIf="f.submitted && _signUpRequest.DayBirth <= 0"
+                                                    class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                    |
+                                                    translate}}</small>
+                                            </div>
+                                        </div>
+                                        <!-- year -->
+                                        <div class="col-4">
+
+                                            <div class="form-group cs-label-effect-dd">
+                                                <select [style]="{'width':'100%'}" class="form-control" name="year"
+                                                    [(ngModel)]="_signUpRequest.YearBirth" (change)="IsValidDate()"
+                                                    [required]="item.mandatoryField">
+                                                    <option [value]='null' disabled>
+                                                        {{ 'signupColumns.ChooseOne' | translate }}
+                                                    </option>
+                                                    <ng-container *ngFor="let item of _YearDetails">
+                                                        <option [value]="item.Id">
+                                                            {{ item.Name | translate }} </option>
+                                                    </ng-container>
+                                                </select>
+                                                <label class="label-with-text" for="YearBirth">{{ 'signupColumns.Year' |
+                                                    translate }}
+                                                </label>
+                                                <small *ngIf="f.submitted && _signUpRequest.YearBirth <= 0"
+                                                    class="float-right input-requerid mt-2">{{'signupColumns.Mandatory'
+                                                    |
+                                                    translate}}</small>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    <ng-container *ngIf="!_ValidateDate">
+                                        <small *ngIf="f.submitted && !_AccessInputs.ValidBirth"
+                                            class="float-right input-requerid mt-2">{{'signupColumns.MustBeOlder' |
+                                            translate}}</small>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+
+                    <!-- PASSWORD -->
+                    <ng-container *ngSwitchCase="'Password'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="Password" name="Password" #Password="ngModel"
+                                    [(ngModel)]="_signUpRequest.Password" class="form-control form-control-1"
+                                    type="password" (keydown.space)="$event.preventDefault();" pPassword
+                                    [required]="item.mandatoryField" (keyup)="PasswordsMatch();">
+                                <label [ngClass]=" (Password.value)? 'label-with-text' : null" for="Password">
+                                    {{item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !Password.valid" class="float-right input-requerid">
+                                    {{'Generics.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- PASSWORD CONFIRMATION -->
+                    <ng-container *ngSwitchCase="'Password Confirmation'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="PasswordC" name="PasswordC" #PasswordC="ngModel"
+                                    [(ngModel)]="_signUpRequest.PasswordConfirmation"
+                                    class="form-control form-control-1" type="password"
+                                    (keydown.space)="$event.preventDefault();" pPassword
+                                    [required]="item.mandatoryField" (keyup)="PasswordsMatch();">
+                                <label [ngClass]=" (PasswordC.value)? 'label-with-text' : null" for="PasswordC">
+                                    {{item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !_AccessInputs.PasswordMatch"
+                                    class="float-right input-requerid">
+                                    {{'Generics.PasswordsNotMatch' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- COMUNICATION -->
+                    <ng-container *ngSwitchCase="'Comunication'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-check checkboxComunication">
+                                <input id="signup_step1_opt_in" name="ComunicationC" [(ngModel)]="_Comunication"
+                                    type="checkbox" binary="true" class="checkmark form-check-input">
+                                <label for="ComunicationC" class="form-check-label labelCheckbox">
+                                    {{'PlayerInfo.Comunication'|translate}} </label><br>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- terms -->
+                    <ng-container *ngSwitchCase="'terms'">
+                        <div class="col-sm-12 mt-4">
+                            <div class="form-group label-effect">
+                                <div class="form-check">
+                                    <label for="TermsC" class="form-check-label labelCheckbox">
+                                        {{'signupColumns.Terms'|translate}} </label><br>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- MessageSite -->
+                    <ng-container *ngSwitchCase="'MessageSite'">
+                        <div class="col-sm-12 mt-2">
+                            <div class="form-group label-effect">
+                                <label for="MessageSite" class="form-check-label labelCheckbox">
+                                    {{_MessageSignUp}} </label><br>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- CodeSignUp -->
+                    <ng-container *ngSwitchCase="'CodeSignUp'">
+                        <div class="col-sm-6 mt-4">
+                            <div class="form-group label-effect">
+                                <input id="PCodeSignUp" name="PCodeSignUp" #PCode="ngModel"
+                                    [(ngModel)]="_signUpRequest.CodeSignUp" class="form-control" type="text"
+                                    [required]="item.mandatoryField">
+                                <label [ngClass]=" (PCode.value)? 'label-with-text' : null" for="PCode">
+                                    {{ item.pathLanguage | translate }}
+                                </label>
+                                <small *ngIf="f.submitted && !PCodeSignUp" class="float-right input-requerid">
+                                    {{'Generics.Mandatory' | translate}}
+                                </small>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- Terms and Conditions -->
+                    <ng-container *ngSwitchCase="'Terms and Conditions'">
+                        <div class="col-sm-12 mt-4">
+                            <div class="form-group label-effect readruleslabel">
+                                <ng-container *ngIf="_configData.IdSite != 690">
+                                    <p-checkbox id="TermsAndConditions" name="TermsAndConditions"
+                                        #TermsAndConditions="ngModel" [(ngModel)]="selectedCategories"
+                                        [required]="item.mandatoryField">
+
+                                    </p-checkbox>
+                                    <ng-container *ngIf="_configData.IdSite == 605">
+                                        <label>{{'signupColumns.termsAndConditions'|translate}}
+                                            <a class="forgot-pass signup-checkbox-link"
+                                                href="https://www.perubet.pe/terminos/" target="_blank">
+                                                {{'signupColumns.termsAndConditionsLink'|translate}}
+                                            </a>
+                                        </label>
+                                    </ng-container>
+                                    <ng-container *ngIf="_configData.IdSite != 605">
+                                        <label>{{'signupColumns.termsAndConditions'|translate}}
+                                            <a class="forgot-pass signup-checkbox-link"
+                                                routerLink="{{ 'routes.rules' | translate }}" target="_blank">
+                                                {{'signupColumns.termsAndConditionsLink'|translate}}
+                                            </a>
+                                        </label>
+                                    </ng-container>
+                                    <small *ngIf="f.submitted && !TermsAndConditions.valid"
+                                        class="float-right input-requerid">
+                                        {{'Generics.Mandatory' | translate}}
+                                    </small>
+                                    <br>
+                                </ng-container>
+
+                                <ng-container *ngIf="_configData.IdSite == 690">
+                                    <p-checkbox id="TermsAndConditionsLevelUp" name="TermsAndConditions"
+                                        #TermsAndConditionsLevelUp="ngModel"
+                                        label="{{'signupColumns.termsAndConditionsLevelUp'|translate}}"
+                                        [(ngModel)]="selectedCategories" [required]="item.mandatoryField">
+                                    </p-checkbox>
+
+                                    <small *ngIf="f.submitted && !TermsAndConditionsLevelUp.valid"
+                                        class="float-right input-requerid">
+                                        {{'Generics.Mandatory' | translate}}
+                                    </small>
+                                    <br>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                </ng-container>
+            </ng-container>
+        </div>
+        <!-- BUTTONS -->
+        <div class="col-sm-12 mt-4">
+            <div class="text-center mt-4">
+
+                <button id="signup_step1_sign_me_up" [disabled]="_model.loadGSingUp" type="submit"
+                    class="btn btn-success mb-2">
+                    <div *ngIf="!_model.loadGSingUp">{{ 'signupColumns.SignMeUp' | translate }}</div>
+                    <div *ngIf="_model.loadGSingUp">{{ 'Generics.Loading' | translate }} &nbsp; <i
+                            class="fa fa-spinner fa-spin fa-spin-size"></i></div>
+                </button>
+            </div>
+        </div>
+    </form>
+</ng-container>
